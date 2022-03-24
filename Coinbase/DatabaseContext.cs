@@ -12,7 +12,7 @@ namespace Coinbase
         }
         
         //The dataset property for the cryptocurrencies
-
+        public DbSet<Cryptocurrency> Cryptocurrencies { get; set; }
         public DbSet<Authentication> ApiKeys { get; set; }
     }
 }

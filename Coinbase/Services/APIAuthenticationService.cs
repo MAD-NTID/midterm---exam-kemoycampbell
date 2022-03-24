@@ -35,10 +35,18 @@ namespace Coinbase.Services
                 return AuthenticateResult.NoResult();
             
             //implement the authentication code here
+            if (!Request.Headers.ContainsKey("Authorization"))
+                throw new UserErrorException("Authorization header missing!!!", 401);
+            
+            AuthenticationHeaderValue headers = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+            string key = headers.Parameter;
+
+            Authentication auth = await _repository.Authenticate(key);
+            
             
             //replace the two variable value with the correct info from the api repository
-            string nameIdentifierApiKey = "";
-            string userName = "";
+            string nameIdentifierApiKey = auth.ApiKey;
+            string userName = auth.UserName;
             
             
             //read more on claim
@@ -64,12 +72,12 @@ namespace Coinbase.Services
         
         protected override Task HandleChallengeAsync(AuthenticationProperties properties)
         {
-            throw new  NotImplementedException();
+            throw new UserErrorException("Unauthorized access", 401);
         }
 
         protected override Task HandleForbiddenAsync(AuthenticationProperties properties)
         {
-            throw new  NotImplementedException();
+            throw new UserErrorException("Forbidden access", 403);
         }
         
         
